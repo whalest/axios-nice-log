@@ -20,29 +20,29 @@ npm i axios-nice-log
 basic
 
 ```ts
-import axios from "axios";
-import axiosNiceLog from "axios-nice-log";
+import axios from 'axios'
+import axiosNiceLog from 'axios-nice-log'
 
-axios.interceptors.request.use(axiosNiceLog);
+axios.interceptors.request.use(axiosNiceLog)
 ```
 
 local option
 
 ```ts
-import axios from "axios";
-import { axiosNiceLog, setAxiosNiceLog } from "axios-nice-log";
+import axios from 'axios'
+import { axiosNiceLog, setAxiosNiceLog } from 'axios-nice-log'
 
 // global options
 setAxiosNiceLog({
-  prefix: "my",
-});
+  prefix: 'my',
+})
 
 // local options
 axios.interceptors.request.use((config) =>
   axiosNiceLog(config, {
-    prefix: "custom",
+    prefix: 'custom',
   })
-);
+)
 ```
 
 ## Api

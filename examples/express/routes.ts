@@ -1,11 +1,11 @@
-import express from "express";
+import express from 'express'
 
-const router = express.Router();
+const router = express.Router()
 
-router.get("/test", (res, req) => {
-  let result = { query: res.query, body: res.body };
-  console.log(result);
-  req.send(result);
-});
+router.get('/test', (res, req) => {
+  let result = { query: res.query, body: res.body }
+  console.log(result)
+  req.send(result)
+})
 
-export default router;
+export default router

@@ -1,32 +1,32 @@
-import axios from "axios";
-import axiosNiceLog, { setAxiosNiceLog } from "../../src/index";
+import axios from 'axios'
+import axiosNiceLog, { setAxiosNiceLog } from '../../src/index'
 
 setAxiosNiceLog({
-  prefix: "kek",
-});
+  prefix: 'kek',
+})
 
-let url = `http://localhost:3000/api/test?data=123&user=1`;
+let url = `http://localhost:3000/api/test?data=123&user=1`
 let get_params = {
   params: {
-    local: "true",
+    local: 'true',
     user: 2,
   },
-};
+}
 
 // ex 1
-const ex1 = axios.create();
-ex1.interceptors.request.use(axiosNiceLog);
-ex1.get(url, get_params);
+const ex1 = axios.create()
+ex1.interceptors.request.use(axiosNiceLog)
+ex1.get(url, get_params)
 
 // ex 2 - params
-const ex2 = axios.create();
+const ex2 = axios.create()
 
 ex2.interceptors.request.use((config) =>
   axiosNiceLog(config, {
-    prefix: "custom",
+    prefix: 'custom',
   })
-);
-ex2.get(url, get_params);
+)
+ex2.get(url, get_params)
 
 // // ex 3 - params
 // const ex3 = axios.create();
@@ -34,5 +34,5 @@ ex2.get(url, get_params);
 // ex3.get(url, get_params);
 
 export const main = () => {
-  return "ok";
-};
+  return 'ok'
+}
