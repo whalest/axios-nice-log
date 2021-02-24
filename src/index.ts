@@ -1,27 +1,8 @@
-import { AxiosRequestConfig } from 'axios'
+import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import chalk from 'chalk'
 import chalkPipe from 'chalk-pipe'
 
-export type keys =
-  | 'prefix'
-  | 'time'
-  | 'method'
-  | 'url'
-  | 'params'
-  | 'separator'
-  | 'delimiter'
-
-export type fields = Partial<Record<keys, string>>
-
-export interface INiceLogOptions {
-  prefix?: string
-  styles?: fields
-  template?: string
-  templates?: fields
-  logger?: (...data: any[]) => void
-}
-
-let defaults: INiceLogOptions = {
+const DEFAULTS = {
   prefix: 'axios',
   styles: {
     prefix: 'green',
@@ -45,94 +26,85 @@ let defaults: INiceLogOptions = {
   logger: console.log,
 }
 
-// TODO: deep merge
-export const setAxiosNiceLog = (options?: INiceLogOptions): INiceLogOptions =>
-  (defaults = { ...defaults, ...options })
-
-export class NiceLog {
-  options: INiceLogOptions = {}
-
-  constructor(options: INiceLogOptions = {}) {
-    this.setOptions(options)
+const objToString = (obj: any) => {
+  try {
+    return JSON.stringify(obj)
+  } catch (e) {
+    return `${obj}`
   }
+}
 
-  setOptions(options: INiceLogOptions = {}) {
-    // TODO: deep merge
-    this.options = Object.assign(this.options, options)
-  }
+const serialize = (config: AxiosRequestConfig) => {
+  let method = (config.method || 'get').toUpperCase()
 
-  get(config: AxiosRequestConfig): AxiosRequestConfig {
-    let params = config.params
-      ? Object.entries(config.params)
+  let params =
+    method === 'GET'
+      ? Object.entries(config.params || {})
           .map(([key, val]) => `${key}${chalk.gray('=')}${val}`)
           .join(chalk.yellow('&'))
-      : ''
+      : ` ${objToString(config.data)}`
 
-    // TODO: refactor
-    let urlParams = new URLSearchParams(config.params)
+  // TODO: refactor
+  let urlParams = new URLSearchParams(config.params)
 
-    let time = new Date().toLocaleTimeString()
-    let method = config.method ?? ''
-    let url = new URL(config.url, config.baseURL).href
+  let time = new Date().toLocaleTimeString()
 
-    // colorize
-    method = method.toUpperCase()
+  let url = new URL(config.url || '', config.baseURL).href
 
-    // TODO: paint params
-    params = params ? `${chalk.yellow('?')}${params}` : ''
+  // TODO: paint params
+  params = params ? `${chalk.yellow('?')}${params}` : ''
 
-    let result = this.paint({
-      params,
-      prefix: this.options.prefix,
-      time,
-      method,
-      url,
-    })
+  return {
+    params,
+    time,
+    method,
+    url,
+  }
+}
 
-    this.print(result)
+const print = (config: AxiosRequestConfig, options: typeof DEFAULTS) => {
+  const serialized = serialize(config)
 
+  let result = options.template
+
+  const data = {
+    ...options.templates,
+    ...serialized,
+    prefix: options.prefix,
+  }
+
+  const keys = Object.keys(
+    options.templates
+  ) as (keyof typeof DEFAULTS['templates'])[]
+
+  keys.forEach((key) => {
+    const value = data[key]
+
+    const style = options.styles[key] || 'reset'
+    const val = options.templates[key].replace('%s', value || '')
+
+    result = result.replace(`%${key}`, chalkPipe(style)(val))
+  })
+
+  return result
+}
+
+export const useAxiosNiceLog = (
+  axios: AxiosInstance,
+  userOptions: Partial<typeof DEFAULTS> = {}
+) => {
+  const options = { ...userOptions, ...DEFAULTS }
+
+  if (!axios) {
+    return
+  }
+
+  axios.interceptors.request.use((config) => {
+    options.logger(print(config, options))
     return config
-  }
+  })
 
-  print(value: string) {
-    this.options.logger(value)
-  }
-
-  /**
-   * @see issue https://github.com/chalk/chalk/issues/258
-   * */
-  chalkTemplate(str: string = '') {
-    let result = str
-    try {
-      let data = Object.assign([], { raw: [result] })
-      result = chalk(data)
-    } catch (e) {
-      this.options.logger('err parsing', e)
-    }
-    return result
-  }
-
-  paint(fields: fields) {
-    let result = this.options.template
-
-    Object.entries(fields).forEach(([key, value]) => {
-      const style = this.options.styles[key] || 'reset'
-      const val = this.options.templates[key].replace('%s', value || '')
-
-      result = result.replace(`%${key}`, chalkPipe(style)(val))
-    })
-
-    result = result
-
-    return result
+  return {
+    unMount: () => {},
   }
 }
-
-export const axiosNiceLog = (
-  config: AxiosRequestConfig,
-  options: INiceLogOptions = {}
-): AxiosRequestConfig => {
-  return new NiceLog({ ...defaults, ...options }).get(config)
-}
-
-export default axiosNiceLog

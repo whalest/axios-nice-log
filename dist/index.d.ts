@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
 
-declare type keys = "prefix" | "time" | "method" | "url" | "params" | "separator" | "delimiter";
+declare type keys = 'prefix' | 'time' | 'method' | 'url' | 'params' | 'separator' | 'delimiter';
 declare type fields = Partial<Record<keys, string>>;
 interface INiceLogOptions {
     prefix?: string;

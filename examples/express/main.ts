@@ -1,22 +1,36 @@
 import axios from 'axios'
-import axiosNiceLog, { setAxiosNiceLog } from '../../src/index'
+import { useAxiosNiceLog } from '../../src/index'
 
+const start = async () => {
+  let url = `http://localhost:3000/api/test?data=123&user=1`
+  let get_params = {
+    params: {
+      local: 'true',
+      user: 2,
+    },
+  }
+
+  const ex1 = axios.create()
+  useAxiosNiceLog(ex1)
+
+  // ex 1
+  try {
+    await ex1.get(url, get_params)
+  } catch (e) {}
+
+  // ex 2
+  try {
+    await ex1.post(url, { option: 'value', pth: 'ddd', d: { c: '' } })
+  } catch (e) {}
+}
+
+start()
+
+/* 
 setAxiosNiceLog({
   prefix: 'kek',
 })
 
-let url = `http://localhost:3000/api/test?data=123&user=1`
-let get_params = {
-  params: {
-    local: 'true',
-    user: 2,
-  },
-}
-
-// ex 1
-const ex1 = axios.create()
-ex1.interceptors.request.use(axiosNiceLog)
-ex1.get(url, get_params)
 
 // ex 2 - params
 const ex2 = axios.create()
@@ -36,3 +50,4 @@ ex2.get(url, get_params)
 export const main = () => {
   return 'ok'
 }
+ */

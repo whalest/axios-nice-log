@@ -1,8 +1,6 @@
-"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var __assign = Object.assign;
-
 // src/index.ts
-var _chalk = require('chalk'); var _chalk2 = _interopRequireDefault(_chalk);
-var _chalkpipe = require('chalk-pipe'); var _chalkpipe2 = _interopRequireDefault(_chalkpipe);
+import chalk from "chalk";
+import chalkPipe from "chalk-pipe";
 var defaults = {
   prefix: "axios",
   styles: {
@@ -26,85 +24,65 @@ var defaults = {
   },
   logger: console.log
 };
-var setAxiosNiceLog = function (options) { return defaults = __assign(__assign({}, defaults), options); };
-var NiceLog = /*@__PURE__*/(function () {
-  function NiceLog(options) {
-  if ( options === void 0 ) options = {};
-
+var setAxiosNiceLog = (options) => defaults = {...defaults, ...options};
+var NiceLog = class {
+  constructor(options = {}) {
     this.options = {};
     this.setOptions(options);
   }
-  NiceLog.prototype.setOptions = function setOptions (options) {
-    if ( options === void 0 ) options = {};
-
+  setOptions(options = {}) {
     this.options = Object.assign(this.options, options);
-  };
-  NiceLog.prototype.get = function get (config) {
+  }
+  get(config) {
     var _a;
-    var params = config.params ? Object.entries(config.params).map(function (ref) {
-      var key = ref[0];
-      var val = ref[1];
-
-      return ("" + key + (_chalk2.default.gray("=")) + val);
-    }).join(_chalk2.default.yellow("&")) : "";
-    var urlParams = new URLSearchParams(config.params);
-    var time = new Date().toLocaleTimeString();
-    var method = (_a = config.method) != null ? _a : "";
-    var url = new URL(config.url, config.baseURL).href;
+    let params = config.params ? Object.entries(config.params).map(([key, val]) => `${key}${chalk.gray("=")}${val}`).join(chalk.yellow("&")) : "";
+    let urlParams = new URLSearchParams(config.params);
+    let time = new Date().toLocaleTimeString();
+    let method = (_a = config.method) != null ? _a : "";
+    let url = new URL(config.url, config.baseURL).href;
     method = method.toUpperCase();
-    params = params ? ("" + (_chalk2.default.yellow("?")) + params) : "";
-    var result = this.paint({
-      params: params,
+    params = params ? `${chalk.yellow("?")}${params}` : "";
+    let result = this.paint({
+      params,
       prefix: this.options.prefix,
-      time: time,
-      method: method,
-      url: url
+      time,
+      method,
+      url
     });
     this.print(result);
     return config;
-  };
-  NiceLog.prototype.print = function print (value) {
+  }
+  print(value) {
     this.options.logger(value);
-  };
-  NiceLog.prototype.chalkTemplate = function chalkTemplate (str) {
-    if ( str === void 0 ) str = "";
-
-    var result = str;
+  }
+  chalkTemplate(str = "") {
+    let result = str;
     try {
-      var data = Object.assign([], {raw: [result]});
-      result = _chalk2.default.call(void 0, data);
+      let data = Object.assign([], {raw: [result]});
+      result = chalk(data);
     } catch (e) {
       this.options.logger("err parsing", e);
     }
     return result;
-  };
-  NiceLog.prototype.paint = function paint (fields) {
-    var this$1 = this;
-
-    var result = this.options.template;
-    Object.entries(fields).forEach(function (ref) {
-      var key = ref[0];
-      var value = ref[1];
-
-      var style = this$1.options.styles[key] || "reset";
-      var val = this$1.options.templates[key].replace("%s", value || "");
-      result = result.replace(("%" + key), _chalkpipe2.default.call(void 0, style)(val));
+  }
+  paint(fields) {
+    let result = this.options.template;
+    Object.entries(fields).forEach(([key, value]) => {
+      const style = this.options.styles[key] || "reset";
+      const val = this.options.templates[key].replace("%s", value || "");
+      result = result.replace(`%${key}`, chalkPipe(style)(val));
     });
     result = result;
     return result;
-  };
-
-  return NiceLog;
-}());
-var axiosNiceLog = function (config, options) {
-  if ( options === void 0 ) options = {};
-
-  return new NiceLog(__assign(__assign({}, defaults), options)).get(config);
+  }
+};
+var axiosNiceLog = (config, options = {}) => {
+  return new NiceLog({...defaults, ...options}).get(config);
 };
 var src_default = axiosNiceLog;
-
-
-
-
-
-exports.NiceLog = NiceLog; exports.axiosNiceLog = axiosNiceLog; exports.default = src_default; exports.setAxiosNiceLog = setAxiosNiceLog;
+export {
+  NiceLog,
+  axiosNiceLog,
+  src_default as default,
+  setAxiosNiceLog
+};

@@ -1,6 +1,6 @@
 {
   "name": "axios-nice-log",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Axios interceptor logger for requests query parameters",
   "author": "reslear <reslear@gmail.com>",
   "homepage": "https://github.com/reslear/whale/tree/main/packages/axios-nice-log",
@@ -8,7 +8,6 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "type": "module",
   "files": [
     "dist"
   ],
@@ -26,8 +25,8 @@
     "url": "git+https://github.com/reslear/whale.git"
   },
   "scripts": {
-    "dev": "esno examples/express/server.ts",
-    "build": "tsup src/index.ts --format esm,cjs --dts --external axios,qs,chalk,chalk-pipe",
+    "dev": "esno ./examples/express/main.ts",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf dist",
     "deploy": "npm run clean && npm run build && npm version patch && npm publish --access public"
   },
@@ -37,6 +36,7 @@
   "devDependencies": {
     "@types/chalk-pipe": "^2.0.0",
     "@types/express": "^4.17.11",
+    "esbuild": "^0.8.51",
     "esno": "^0.4.4",
     "express": "^4.17.1",
     "ts-node": "9.1.1",
@@ -47,6 +47,6 @@
   "dependencies": {
     "axios": "0.21.1",
     "chalk": "4.1.0",
-    "chalk-pipe": "^5.0.0"
+    "chalk-pipe": "^4.0.0"
   }
 }
