@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "description": "Axios interceptor logger for requests query parameters",
   "author": "reslear <reslear@gmail.com>",
-  "homepage": "https://github.com/reslear/whale/tree/main/packages/axios-nice-log",
+  "homepage": "https://github.com/whalest/axios-nice-log",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -22,7 +22,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/reslear/whale.git"
+    "url": "git+https://github.com/whalest/axios-nice-log"
   },
   "scripts": {
     "dev": "esno ./examples/express/main.ts",
@@ -31,7 +31,7 @@
     "deploy": "npm run clean && npm run build && npm version patch && npm publish --access public"
   },
   "bugs": {
-    "url": "https://github.com/reslear/whale/issues"
+    "url": "https://github.com/whalest/axios-nice-log/issues"
   },
   "devDependencies": {
     "@types/chalk-pipe": "^2.0.0",
