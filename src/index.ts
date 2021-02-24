@@ -34,15 +34,24 @@ const objToString = (obj: any) => {
   }
 }
 
+const isString = (str: any) => {
+  return typeof str === 'string' || str instanceof String
+}
+
 const serialize = (config: AxiosRequestConfig) => {
   let method = (config.method || 'get').toUpperCase()
 
-  let params =
-    method === 'GET'
-      ? Object.entries(config.params || {})
-          .map(([key, val]) => `${key}${chalk.gray('=')}${val}`)
-          .join(chalk.yellow('&'))
-      : ` ${objToString(config.data)}`
+  const data = config.params || config.data || {}
+
+  for (let item of data) {
+    console.log(item)
+  }
+
+  console.log(data.constructor)
+
+  let params = Object.entries(data)
+    .map(([key, val]) => `${key}${chalk.gray('=')}${val}`)
+    .join(chalk.yellow('&'))
 
   // TODO: refactor
   let urlParams = new URLSearchParams(config.params)
@@ -64,6 +73,8 @@ const serialize = (config: AxiosRequestConfig) => {
 
 const print = (config: AxiosRequestConfig, options: typeof DEFAULTS) => {
   const serialized = serialize(config)
+
+  // TODO: !!!
 
   let result = options.template
 

@@ -1,6 +1,16 @@
 import axios from 'axios'
 import { useAxiosNiceLog } from '../../src/index'
 
+const toUrlParams = (obj: any) => {
+  var params = new URLSearchParams()
+
+  Object.keys(obj).forEach((key) => {
+    if (obj[key]) params.append(key, obj[key])
+  })
+
+  return params
+}
+
 const start = async () => {
   let url = `http://localhost:3000/api/test?data=123&user=1`
   let get_params = {
@@ -21,6 +31,14 @@ const start = async () => {
   // ex 2
   try {
     await ex1.post(url, { option: 'value', pth: 'ddd', d: { c: '' } })
+  } catch (e) {}
+
+  // ex 3
+  try {
+    await ex1.post(
+      url,
+      toUrlParams({ option: 'value', pth: 'ddd', d: { c: '' } })
+    )
   } catch (e) {}
 }
 
