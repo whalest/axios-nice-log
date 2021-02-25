@@ -1,6 +1,6 @@
 {
   "name": "axios-nice-log",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Axios interceptor logger for requests query parameters",
   "author": "reslear <reslear@gmail.com>",
   "homepage": "https://github.com/whalest/axios-nice-log",
