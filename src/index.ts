@@ -1,6 +1,7 @@
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import chalk from 'chalk'
 import chalkPipe from 'chalk-pipe'
+import { isObject, stringify, mergeDeep } from './utils'
 
 const DEFAULTS = {
   prefix: 'axios',
@@ -26,55 +27,76 @@ const DEFAULTS = {
   logger: console.log,
 }
 
-const objToString = (obj: any) => {
-  try {
-    return JSON.stringify(obj)
-  } catch (e) {
-    return `${obj}`
-  }
+const eachParams = (data: any) => {
+  let params = Object.entries(data)
+    .map(
+      ([key, val]) =>
+        `${key}${chalk.gray('=')}${isObject(val) ? stringify(val) : val}`
+    )
+    .join(chalk.yellow('&'))
+
+  return params
 }
 
-const isString = (str: any) => {
-  return typeof str === 'string' || str instanceof String
+export const paramsToObject = (props: URLSearchParams) => {
+  const params: Record<
+    string,
+    ReturnType<URLSearchParams['get' | 'getAll']>
+  > = {}
+
+  for (const key of props.keys()) {
+    if (key.endsWith('[]')) {
+      params[key.replace('[]', '')] = props.getAll(key)
+    } else {
+      params[key] = props.get(key)
+    }
+  }
+
+  return params
+}
+
+const parseUrlSearch = (data: any) => {
+  if (!(data instanceof URLSearchParams)) return data
+
+  let result: { [k: string]: any } = {}
+
+  for (let [key, value] of data) {
+    result[key] = isObject(value) ? stringify(value) : value
+  }
+
+  return result
+}
+
+const parseUrl = (str = '', base: any) => {
+  const { origin, pathname, searchParams } = new URL(str, base)
+
+  return {
+    url: `${origin}${pathname}`,
+    query: Object.fromEntries(searchParams),
+  }
 }
 
 const serialize = (config: AxiosRequestConfig) => {
-  let method = (config.method || 'get').toUpperCase()
+  let { url, query } = parseUrl(config.url, config.baseURL)
 
-  const data = config.params || config.data || {}
+  let data = config.params || config.data || {}
 
-  for (let item of data) {
-    console.log(item)
-  }
+  data = mergeDeep(query, data)
+  data = parseUrlSearch(data)
+  let params = eachParams(data)
 
-  console.log(data.constructor)
-
-  let params = Object.entries(data)
-    .map(([key, val]) => `${key}${chalk.gray('=')}${val}`)
-    .join(chalk.yellow('&'))
-
-  // TODO: refactor
-  let urlParams = new URLSearchParams(config.params)
-
-  let time = new Date().toLocaleTimeString()
-
-  let url = new URL(config.url || '', config.baseURL).href
-
-  // TODO: paint params
   params = params ? `${chalk.yellow('?')}${params}` : ''
 
   return {
     params,
-    time,
-    method,
+    time: new Date().toLocaleTimeString(),
+    method: (config.method || 'get').toUpperCase(),
     url,
   }
 }
 
 const print = (config: AxiosRequestConfig, options: typeof DEFAULTS) => {
   const serialized = serialize(config)
-
-  // TODO: !!!
 
   let result = options.template
 

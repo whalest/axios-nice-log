@@ -5,10 +5,10 @@
  * @param {...object} objects - Objects to merge
  * @returns {object} New object with merged key/values
  */
-function mergeDeep(...objects) {
-  const isObject = (obj) => obj && typeof obj === 'object'
+export function mergeDeep(...objects: any) {
+  const isObject = (obj: any) => obj && typeof obj === 'object'
 
-  return objects.reduce((prev, obj) => {
+  return objects.reduce((prev: any, obj: any) => {
     Object.keys(obj).forEach((key) => {
       const pVal = prev[key]
       const oVal = obj[key]
@@ -25,3 +25,15 @@ function mergeDeep(...objects) {
     return prev
   }, {})
 }
+
+export const stringify = (obj: any) => {
+  try {
+    return JSON.stringify(obj)
+  } catch (e) {}
+
+  return obj
+}
+
+export const isObject = (obj: any) => typeof obj === 'object' && obj !== null
+export const isString = (str: any) =>
+  typeof str === 'string' || str instanceof String

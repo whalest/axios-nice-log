@@ -25,7 +25,8 @@
     "url": "git+https://github.com/whalest/axios-nice-log"
   },
   "scripts": {
-    "start": "esno ./examples/express/main.ts",
+    "start": "npm run build -- --watch",
+    "dev": "esno examples/express/main.ts",
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf dist",
     "deploy": "npm run clean && npm run build && npm version patch && npm publish --access public"
@@ -39,8 +40,7 @@
     "esbuild": "^0.8.51",
     "esno": "^0.4.4",
     "express": "^4.17.1",
-    "ts-node": "9.1.1",
-    "ts-node-dev": "^1.1.1",
+    "ts-node-dev": "^1.1.2",
     "tsup": "4.3.1",
     "typescript": "4.2.2"
   },
