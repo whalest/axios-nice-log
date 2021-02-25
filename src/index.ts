@@ -2,6 +2,7 @@ import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import chalk from 'chalk'
 import chalkPipe from 'chalk-pipe'
 import { isObject, stringify, mergeDeep } from './utils'
+import qs from 'qs'
 
 const DEFAULTS = {
   prefix: 'axios',
@@ -68,11 +69,11 @@ const parseUrlSearch = (data: any) => {
 }
 
 const parseUrl = (str = '', base: any) => {
-  const { origin, pathname, searchParams } = new URL(str, base)
+  const { origin, pathname, search } = new URL(str, base)
 
   return {
     url: `${origin}${pathname}`,
-    query: Object.fromEntries(searchParams),
+    query: search,
   }
 }
 
@@ -81,8 +82,8 @@ const serialize = (config: AxiosRequestConfig) => {
 
   let data = config.params || config.data || {}
 
-  data = mergeDeep(query, data)
-  data = parseUrlSearch(data)
+  data = mergeDeep(qs.parse(query), isObject(data) ? data : qs.parse(data))
+
   let params = eachParams(data)
 
   params = params ? `${chalk.yellow('?')}${params}` : ''
