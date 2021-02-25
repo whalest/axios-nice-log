@@ -132,12 +132,12 @@ export const useAxiosNiceLog = (
     return
   }
 
-  axios.interceptors.request.use((config) => {
+  const interceptor = axios.interceptors.request.use((config) => {
     options.logger(print(config, options))
     return config
   })
 
   return {
-    unMount: () => {},
+    eject: () => axios.interceptors.request.eject(interceptor),
   }
 }
