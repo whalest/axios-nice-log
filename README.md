@@ -2,7 +2,7 @@
 
 Axios interceptor logger for requests query parameters for humans 😜
 
-<img  src="https://raw.githubusercontent.com/reslear/whale/main/packages/axios-nice-log/media/thumb.png"  width="584">
+<img  src="https://raw.githubusercontent.com/whalest/axios-nice-log/main/media/thumb.png"  width="584">
 
 - many options customizable
 - set global defaults
