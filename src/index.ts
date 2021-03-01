@@ -127,7 +127,7 @@ export const useAxiosNiceLog = (
   axios: AxiosInstance,
   userOptions: Partial<typeof DEFAULTS> = {}
 ) => {
-  const options = { ...userOptions, ...DEFAULTS }
+  const options = { ...DEFAULTS, ...userOptions }
 
   if (!axios) {
     return
