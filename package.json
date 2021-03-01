@@ -27,8 +27,7 @@
   "scripts": {
     "dev": "esno examples/express/main.ts",
     "build": "tsup src/index.ts --format esm,cjs --dts",
-    "clean": "rm -rf dist",
-    "publish": "npm run clean && npm run build && npm version patch && npm publish --access public"
+    "clean": "rm -rf dist"
   },
   "bugs": {
     "url": "https://github.com/whalest/axios-nice-log/issues"
